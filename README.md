@@ -1,18 +1,65 @@
-# Salesforce DX Project: Next Steps
+# Salesforce Leads API Integration Project
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+Este proyecto fue desarrollado como práctica en Salesforce para realizar una integración con una API externa, mantener la información sincronizada y automatizar procesos en los objetos Lead y Country.
 
-## How Do You Plan to Deploy Your Changes?
+---
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+## 🎯 Objetivos del Proyecto
 
-## Configure Your Salesforce DX Project
+1. **Importar información de países** desde la API [https://countrylayer.com](https://countrylayer.com)
+2. **Actualizar la información diariamente** en Salesforce
+3. **Mostrar información del país** en el Lead usando un trigger
+4. **Validar condiciones al cambiar el Owner del Lead**
+5. **Registrar la fecha de asignación del Owner** mediante un Flow
+6. **Subir todo el desarrollo a un repositorio GitHub**
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+---
 
-## Read All About It
+## 🔧 Funcionalidades Desarrolladas
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+### 1. API REST Integration con CountryLayer
+- Clase Apex `CountryLayerService`
+- Llama a la API REST de CountryLayer
+- Extrae: Nombre del país, código Alpha2, Alpha3, capital, región y bloques regionales
+
+### 2. Actualización diaria automática
+- Se creó un `Schedulable Apex` llamado `CountryDataScheduler`
+- Ejecuta una llamada a la API una vez al día
+- Compara y actualiza registros existentes
+
+### 3. Trigger sobre Leads
+- `LeadCountryTrigger` asocia automáticamente el país del Lead con el objeto Country
+- Muestra campos del país (capital, región, etc.) en los Leads
+
+### 4. Regla de Validación
+- No permite cambiar el Owner del Lead a menos que:
+  - Esté informado: Country, Lead Source y No. of Employees
+  - EXCEPCIONES:
+    - El perfil **System Administrator** no necesita completar Country ni No. of Employees
+    - El perfil **Contract Manager** no necesita No. of Employees
+
+### 5. Flow (Flujo Automatizado)
+- Flow de tipo `Record-Triggered Flow`
+- Guarda la fecha actual en el campo personalizado `Owner_Since__c` cuando cambia el Owner del Lead
+
+---
+
+## 🧪 Pruebas
+
+- Clases de test `CountryLayerServiceTest` y `LeadCountryTriggerTest` incluidas
+- Prueban la integración y lógica del trigger
+- Cobertura mayor al 75% para despliegue
+
+---
+
+## 💾 Despliegue
+
+- Todo el código está en formato metadata compatible con Salesforce DX
+- Puede ser desplegado con herramientas como Workbench, VS Code + SFDX, o mediante cambios manuales en el entorno Sandbox
+
+---
+
+## ☁️ Repositorio GitHub
+
+- Este proyecto está disponible en GitHub en este repositorio:
+  👉 [https://github.com/Gmm6781/Vass-salesforce-leads-project](https://github.com/Gmm6781/Vass-salesforce-leads-project)
